@@ -72,13 +72,13 @@ class RSAEngine {
 
   // 將字節列表轉換為 BigInt
   // 修正點：這裡的返回類型必須是 BigInt
-  BigInt _bytesToBigInt(List<int> bytes) {
-    BigInt result = BigInt.zero;
-    for (var byte in bytes) {
-      result = (result << 8) | BigInt.from(byte);
-    }
-    return result;
-  }
+  // BigInt _bytesToBigInt(List<int> bytes) {
+  //   BigInt result = BigInt.zero;
+  //   for (var byte in bytes) {
+  //     result = (result << 8) | BigInt.from(byte);
+  //   }
+  //   return result;
+  // }
 
   List<int> _bigIntToBytes(BigInt number) {
     if (number == BigInt.zero) return [0];
