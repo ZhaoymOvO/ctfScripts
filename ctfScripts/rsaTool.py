@@ -323,5 +323,7 @@ dec2s <msg:int> -> str  decrypt msg to string"""
                     print(key.decryptToString(arg))
                 case _:
                     print("[!] unknown command")
-        except Exception as e:
+        except ValueError as e:
             print(f"[!] {e}")
+        except ZeroDivisionError as e:
+            print(f"[!] {e
