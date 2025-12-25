@@ -326,4 +326,4 @@ dec2s <msg:int> -> str  decrypt msg to string"""
         except ValueError as e:
             print(f"[!] {e}")
         except ZeroDivisionError as e:
-            print(f"[!] {e
+            print(f"[!] {e}")
