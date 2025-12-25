@@ -52,23 +52,48 @@ class rsaKeyPair:
         }
 
     def setP(self, p: int):
-        """Set the value of prime p."""
+        """
+        set self.p
+
+        Args:
+            p (int): self.p
+        """
         self.p = p
 
     def setQ(self, q: int):
-        """Set the value of prime q."""
+        """
+        set self.q
+
+        Args:
+            q (int): self.q
+        """
         self.q = q
 
     def setE(self, e: int):
-        """Set the public exponent e."""
+        """
+        set self.e
+
+        Args:
+            e (int): self.e
+        """
         self.e = e
 
     def setDp(self, dp: int):
-        """Set the CRT exponent dp."""
+        """
+        set self.dp
+
+        Args:
+            dp (int): self.dp
+        """
         self.dp = dp
 
     def setDq(self, dq: int):
-        """Set the CRT exponent dq."""
+        """
+        set self.dq
+
+        Args:
+            dq (int): self.dq
+        """
         self.dq = dq
 
     def calculateEFromDpAndDq(self):
@@ -129,16 +154,52 @@ class rsaKeyPair:
         self.dq = int(gmpy2.invert(self.e, self.q - 1))
 
     def encrypt(self, msg: int) -> int:
+        """
+        encrypt message
+
+        Args:
+            msg (int): message to encrypt
+
+        Raises:
+            ValueError: if e and/or n are not set
+
+        Returns:
+            int: encrypted message
+        """
         if not self.e or not self.n:
             raise ValueError("e and n are required for encryption")
         return int(gmpy2.powmod(msg, self.e, self.n))
 
     def decrypt(self, msg: int) -> int:
+        """
+        decrypt message
+
+        Args:
+            msg (int): message to decrypt
+
+        Raises:
+            ValueError: when d and n not set
+
+        Returns:
+            int: decrypted message
+        """
         if not self.d or not self.n:
             raise ValueError("d and n are required for decryption")
         return int(gmpy2.powmod(msg, self.d, self.n))
 
     def decryptToString(self, msg: int) -> str:
+        """
+        decrypt message and convert to string
+
+        Args:
+            msg (int): message to decrypt
+
+        Raises:
+            ValueError: when d and n not set
+
+        Returns:
+            str: decrypted message
+        """
         return str(libnum.n2s(self.decrypt(msg)))
 
 
