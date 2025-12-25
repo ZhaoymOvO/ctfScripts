@@ -78,6 +78,15 @@ class rsaKeyPair:
         """
         self.e = e
 
+    def setN(self, n: int):
+        """
+        set self.n
+
+        Args:
+            n (int): self.n
+        """
+        self.n = n
+
     def setDp(self, dp: int):
         """
         set self.dp
@@ -127,6 +136,32 @@ class rsaKeyPair:
         if self.p and self.q:
             self.n = self.p * self.q
 
+    def caculatePQFromENDp(self):
+        """
+        caculate p and q from e, n and dp
+
+        Raises:
+            ValueError: when e, n and/or dp are/is not set
+            ValueError: when cannot found p and q
+        """
+        if not self.e or not self.n or not self.dp:
+            raise ValueError("e, n, dp are required")
+        e, n, dp = self.e, self.n, self.dp
+        p: int | None = None
+        q: int | None = None
+        for k in range(1, e):
+            if (dp * e - 1) % k == 0:
+                pCandidate = (dp * e - 1) // k + 1
+                if n % pCandidate == 0:
+                    p = pCandidate
+                    q = n // p
+                    break
+        if q:
+            self.p = p
+            self.q = q
+        else:
+            raise ValueError("cannot found p and q")
+
     def calculateKeyPair(self):
         """
         Calculate all remaining RSA parameters (n, phiN, d, dp, dq)
@@ -161,7 +196,7 @@ class rsaKeyPair:
             msg (int): message to encrypt
 
         Raises:
-            ValueError: if e and/or n are not set
+            ValueError: if e and/or n is/are not set
 
         Returns:
             int: encrypted message
@@ -210,11 +245,13 @@ bye                     exit program
 p <p:int>               set prime p
 q <q:int>               set prime q
 e <e:int>               set public exponent
+n <n:int>               set n
 dp <dp:int>             set dp
 dq <dq:int>             set dq
 s -> dict               print all parameters
 ce                      calculate e from dp and dq
 ck                      calculate n, phiN, d, dp, dq
+cpq                     calculate p, q from e, n, dp
 enc <msg:int> -> int    encrypt msg
 dec <msg:int> -> int    decrypt msg
 dec2s <msg:int> -> str  decrypt msg to string"""
@@ -224,56 +261,66 @@ dec2s <msg:int> -> str  decrypt msg to string"""
         arg = int(userInput[1]) if len(userInput) > 1 else None
         if not mode:
             continue
-        match mode:
-            case "bye":
-                break
-            case "h":
-                print(helpText)
-            case "p":
-                if not arg:
-                    print("[!] missing argument")
-                    continue
-                key.setP(arg)
-            case "q":
-                if not arg:
-                    print("[!] missing argument")
-                    continue
-                key.setQ(arg)
-            case "e":
-                if not arg:
-                    print("[!] missing argument")
-                    continue
-                key.setE(arg)
-            case "dp":
-                if not arg:
-                    print("[!] missing argument")
-                    continue
-                key.setDp(arg)
-            case "dq":
-                if not arg:
-                    print("[!] missing argument")
-                    continue
-                key.setDq(arg)
-            case "s":
-                print(key.stat())
-            case "ce":
-                key.calculateEFromDpAndDq()
-            case "ck":
-                key.calculateKeyPair()
-            case "enc":
-                if not arg:
-                    print("[!] missing argument")
-                    continue
-                print(key.encrypt(arg))
-            case "dec":
-                if not arg:
-                    print("[!] missing argument")
-                    continue
-                print("\n" + str(key.decrypt(arg)))
-            case "dec2s":
-                if not arg:
-                    print("[!] missing argument")
-                    continue
-                print(key.decryptToString(arg))
-            case _:
-                print("[!] unknown command")
+        try:
+            match mode:
+                case "bye":
+                    break
+                case "h":
+                    print(helpText)
+                case "p":
+                    if not arg:
+                        print("[!] missing argument")
+                        continue
+                    key.setP(arg)
+                case "q":
+                    if not arg:
+                        print("[!] missing argument")
+                        continue
+                    key.setQ(arg)
+                case "e":
+                    if not arg:
+                        print("[!] missing argument")
+                        continue
+                    key.setE(arg)
+                case "n":
+                    if not arg:
+                        print("[!] missing argument")
+                        continue
+                    key.setN(arg)
+                case "dp":
+                    if not arg:
+                        print("[!] missing argument")
+                        continue
+                    key.setDp(arg)
+                case "dq":
+                    if not arg:
+                        print("[!] missing argument")
+                        continue
+                    key.setDq(arg)
+                case "s":
+                    print(key.stat())
+                case "ce":
+                    key.calculateEFromDpAndDq()
+                case "ck":
+                    key.calculateKeyPair()
+                case "cpq":
+                    key.caculatePQFromENDp()
+                case "enc":
+                    if not arg:
+                        print("[!] missing argument")
+                        continue
+                    print(key.encrypt(arg))
+                case "dec":
+                    if not arg:
+                        print("[!] missing argument")
+                        continue
+                    print("\n" + str(key.decrypt(arg)))
+                case "dec2s":
+                    if not arg:
+                        print("[!] missing argument")
+                        continue
+                    print(key.decryptToString(arg))
+                case _:
+                    print("[!] unknown command")
+        except Exception as e:
+            print(f"[!] {e}")
