@@ -122,15 +122,15 @@ class rsaKeyPair:
             try:
                 # e * dp = 1 mod (p-1) => e = invert(dp, p-1)
                 self.e = int(gmpy2.invert(self.dp, self.p - 1))
-            except ZeroDivisionError:
-                raise ValueError("d_p is not invertible mod (p-1)")
+            except ZeroDivisionError as e:
+                raise ValueError("d_p is not invertible mod (p-1)") from e
 
         # 如果 p 侧不行，尝试从 q 侧恢复，或者用于校验
         elif self.dq and self.q:
             try:
                 self.e = int(gmpy2.invert(self.dq, self.q - 1))
-            except ZeroDivisionError:
-                raise ValueError("d_q is not invertible mod (q-1)")
+            except ZeroDivisionError as e:
+                raise ValueError("d_q is not invertible mod (q-1)") from e
 
         # 如果 p 和 q 都在，计算 n
         if self.p and self.q:
@@ -180,10 +180,10 @@ class rsaKeyPair:
 
         try:
             self.d = int(gmpy2.invert(self.e, self.phiN))
-        except ZeroDivisionError:
-            raise ValueError(
+        except ZeroDivisionError as e:
+            raise ZeroDivisionError(
                 f"e ({self.e}) is not coprime to phiN, modular inverse does not exist."
-            )
+            ) from e
 
         self.dp = int(gmpy2.invert(self.e, self.p - 1))
         self.dq = int(gmpy2.invert(self.e, self.q - 1))
