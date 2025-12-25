@@ -6,6 +6,7 @@ the RSA cryptosystem, including private/public keys and CRT parameters.
 """
 
 import gmpy2
+import libnum
 
 
 class rsaKeyPair:
@@ -137,6 +138,9 @@ class rsaKeyPair:
             raise ValueError("d and n are required for decryption")
         return int(gmpy2.powmod(msg, self.d, self.n))
 
+    def decryptToString(self, msg: int) -> str:
+        return str(libnum.n2s(self.decrypt(msg)))
+
 
 if __name__ == "__main__":
     key = rsaKeyPair()
@@ -151,7 +155,8 @@ s -> dict               print all parameters
 ce                      calculate e from dp and dq
 ck                      calculate n, phiN, d, dp, dq
 enc <msg:int> -> int    encrypt msg
-dec <msg:int> -> int    decrypt msg"""
+dec <msg:int> -> int    decrypt msg
+dec2s <msg:int> -> str  decrypt msg to string"""
     while 1:
         userInput = input("rsa tool> ").lower().strip().split()
         mode = userInput[0] if len(userInput) > 0 else None
@@ -204,5 +209,10 @@ dec <msg:int> -> int    decrypt msg"""
                     print("[!] missing argument")
                     continue
                 print("\n" + str(key.decrypt(arg)))
+            case "dec2s":
+                if not arg:
+                    print("[!] missing argument")
+                    continue
+                print(key.decryptToString(arg))
             case _:
                 print("[!] unknown command")
