@@ -33,7 +33,7 @@ class rsaKeyPair:
     dp: int | None = None
     dq: int | None = None
 
-    def stat(self) -> dict:
+    def stat(self) -> dict[str, int | None]:
         """
         Return the current state of all RSA parameters.
 
