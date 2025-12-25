@@ -39,7 +39,7 @@ class rsaKeyPair:
         Return the current state of all RSA parameters.
 
         Returns:
-            dict: A dictionary containing p, q, e, n, d, phiN, dp, and dq.
+            dict[str, int | None]: A dictionary containing p, q, e, n, d, phiN, dp, and dq.
         """
         return {
             "p": self.p,
