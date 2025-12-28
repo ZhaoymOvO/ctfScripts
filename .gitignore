@@ -4,6 +4,7 @@
 .mypy_cache/
 .venv/
 .vscode/
+.idea/
 
 __*__.*
 
